@@ -1,0 +1,119 @@
+﻿@model WoM_Labb2.Models.Tasks
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BeginDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeadlineDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Requirements)
+            </th>
+            <th>
+                Responsibility
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewData["Tasks"] as List<Tasks>)
+        {
+            <tr>
+                <td>
+                    @item.BeginDateTime.ToShortDateString()
+                </td>
+                <td>
+                    @item.DeadlineDateTime.ToShortDateString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Requirements)
+                </td>
+                <td>
+                    @{int iterator = 0;}
+                    @foreach (var item2 in ViewData["User"] as List<Assignments>)
+                    {
+                        if (item2.TaskID == item.TaskID)
+                        {
+                            <p> @item2.User.FirstName @item2.User.LastName </p>
+                            iterator++;
+                        }
+                    }
+                    @if (iterator == 0)
+                    {
+                        <p> This activity have no one responsible </p>
+                    }
+                    @if (iterator > 1)
+                    {
+                        <p style="color:blue"><i class="fas fa-user-circle"></i></p>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.TaskID" style="color:red"><i class="fab fa-bitbucket"></i> Remove</a>
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td colspan="2">
+                <p><i class="fas fa-user-circle" style="color:blue"></i> = means this task has more than one responsible person </p>
+            </td>
+            <td colspan="4"></td>
+        </tr>
+
+        <tr>
+            <td style="border-top:solid; color:black; border-right:solid; border-left:solid;" colspan="2">
+                <br /><h3>Create task</h3>
+            </td>
+        </tr>
+
+        <tr style="border-top:hidden;">
+            <td style="border-top:hidden; border-bottom:solid; color:black; border-right:solid; border-left:solid;" colspan="2">
+                <form asp-action="Create" class="form-group">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group" style="margin:0px 15px 0px 0px; display:block">
+                        <strong><label asp-for="BeginDateTime" class="control-label"></label></strong>
+                        <input asp-for="BeginDateTime" class="form-control" type="datetime" value="@DateTime.Now"/>
+                        <br /><span asp-validation-for="BeginDateTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="margin:0px 15px 0px 0px; display:block">
+                        <strong><label asp-for="DeadlineDateTime" class="control-label"></label></strong>
+                        <input asp-for="DeadlineDateTime" class="form-control" type="datetime" value="@DateTime.Now.AddDays(7)"/>
+                        <br /><span asp-validation-for="DeadlineDateTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="margin:0px 15px 0px 0px; display:block">
+                        <strong><label asp-for="Title" class="control-label"></label></strong>
+                        <textarea asp-for="Title" class="form-control"></textarea>
+                        <br /><span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="margin:0px 15px 0px 0px; display:block">
+                        <strong><label asp-for="Requirements" class="control-label"></label></strong>
+                        <textarea asp-for="Requirements" class="form-control"></textarea>
+                        <br /><span asp-validation-for="Requirements" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="margin:0px 15px 0px 0px">
+                        <input type="submit" value="Create task" class="btn btn-primary" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
